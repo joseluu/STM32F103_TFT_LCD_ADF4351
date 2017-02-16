@@ -1,0 +1,10 @@
+CodeDB
+Debug/
+Release/
+Src/Backup
+Inc/Backup
+GD32_cube
+.mxproject
+.vs
+Touch_Sample.sdf
+VisualGDBCache
