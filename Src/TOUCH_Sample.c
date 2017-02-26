@@ -55,7 +55,7 @@ Requirements: WindowManager - ( )
 #include "Board_Touch.h"
 #include "FrameWinDLGSweeper.h"
 
-	
+
 /*********************************************************************
 *
 *       Defines
@@ -95,16 +95,24 @@ void MainTask(void) {
 
 	Touch_Initialize();
 
-	GUI_CURSOR_Show();
+	//GUI_CURSOR_Show();
 	GUI_SetColor(GUI_BLUE);
 	GUI_Clear();
-	GUI_DispString("Starting ...");
+//	GUI_DispString("Starting ...");
 	WM_HWIN hWin;
-	hWin = CreateFramewin();
+	hWin = CreateFramewin();			// écran avec barre du haut " ADF 4351 PLL "
 
+	 	EDIT_SetCursorAtPixel(0,0);
+	GUI_Exec();
+	
+	while (1) {
+	}
+}	
+	
+	/*
 
 //	SynchroScope();          // modif cricri
-  /* Infinite loop */
+  // Infinite loop //
 	while (1) {
 //		DisplayCurrentFrequency(hWin, GetCurrentFrequency());
 //		k_TouchUpdate();          // modif cricri
@@ -113,7 +121,7 @@ void MainTask(void) {
 		GUI_Delay(10);
 	}
 }
-
+*/
 
 /*************************** End of file ****************************/
 
