@@ -118,8 +118,6 @@ unsigned short GPIO_X_Measurement(void){
 	HAL_GPIO_WritePin(YM_GPIO_Port, XM_Pin, M_PinState);
 	GPIO_Restore_Outputs();
 	xValue = median(sValues, NUMSAMPLES);
-	sprintf(szValue, "X: %d\t", xValue);
-	HAL_UART_Transmit(&huart1, szValue, strlen(szValue), 1000); 
 	return xValue;
 }
 void GPIO_Y_MeasurementSetup(void)
@@ -170,8 +168,8 @@ unsigned short GPIO_Y_Measurement(void){
 	HAL_GPIO_WritePin(YM_GPIO_Port, YM_Pin, M_PinState);
 	GPIO_Restore_Outputs();
 	yValue = median(sValues, NUMSAMPLES);
-	sprintf(szValue, "Y: %d\t", yValue);
-	HAL_UART_Transmit(&huart1, szValue, strlen(szValue), 1000); 
+//	sprintf(szValue, "Y: %d\t", yValue);
+//	HAL_UART_Transmit(&huart1, szValue, strlen(szValue), 1000); 
 	return yValue;
 }
 
