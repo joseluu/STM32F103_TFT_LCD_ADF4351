@@ -2,19 +2,15 @@
 #include "ADF4350_Messages.h"
 #include "ADF4350_V1.h"
 
-unsigned long Register_Buf[12]; //to communicate with menu dialog
-
 int GetRefClk(){
 	return REF_CLK;
 }
 
-void OnEditClicked_RF_Out(WM_MESSAGE * pMsg)
-{
-}
 
-void OnButtonClicked_RF_OUT(WM_MESSAGE * pMsg)
+
+void DoRfOut()
 {
-	unsigned long temp = Register_Buf[6], op;
+	unsigned long temp = sweepParameters.current, op;
 	double n;
 	op = temp % 100;
 	temp -= op;
@@ -24,27 +20,12 @@ void OnButtonClicked_RF_OUT(WM_MESSAGE * pMsg)
 	RF_OUT();//���
 }
 
-void OnButtonClicked_Start_F(WM_MESSAGE * pMsg)
-{
-}
-
-void OnButtonClicked_Stop_F(WM_MESSAGE * pMsg)
-{
-}
-
-void OnButtonClicked_Delta_F(WM_MESSAGE * pMsg)
-{
-}
-
-void OnButtonClicked_Ramp_Clk(WM_MESSAGE * pMsg)
-{
-}
 
 int bStarted;
 
-void OnButtonClicked_Start_SW(WM_MESSAGE * pMsg)
+void DoStartSweep()
 {
-	unsigned long temp = Register_Buf[9], op;
+	unsigned long temp = sweepParameters.step, op;
 	double n;
 	double Delta;
 	unsigned long Start;
@@ -59,34 +40,18 @@ void OnButtonClicked_Start_SW(WM_MESSAGE * pMsg)
 		n /= 1000;
 		Delta = n;
 	
-		Start = Register_Buf[7];
-		Stop = Register_Buf[8];
-		Sweep_time = Register_Buf[10];
+		Start = sweepParameters.start;
+		Stop = sweepParameters.stop;
+		Sweep_time = sweepParameters.timeStep;
 		StartSweep(Start, Stop, Sweep_time, Delta);
 	}
 }
 
-void OnButtonClicked_Stop_SW(WM_MESSAGE * pMsg)
+void DoStopSweep()
 {
 	if (bStarted) {
 		SweepTimerStop();	
 		bStarted = 0;
 	}
-}
-
-void OnEditClicked_Start_F(WM_MESSAGE * pMsg)
-{
-}
-
-void OnEditClicked_Stop_F(WM_MESSAGE * pMsg)
-{
-}
-
-void OnEditClicked_Delta_F(WM_MESSAGE * pMsg)
-{
-}
-
-void OnEditClicked_Ramp_Clk(WM_MESSAGE * pMsg)
-{
 }
 

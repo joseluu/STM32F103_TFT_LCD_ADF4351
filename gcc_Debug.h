@@ -317,6 +317,9 @@
 #ifndef __UACCUM_MAX__
 #define __UACCUM_MAX__ 0XFFFFFFFFP-16UK
 #endif
+#ifndef STM32F103RB
+#define STM32F103RB 1
+#endif
 #ifndef __DECIMAL_DIG__
 #define __DECIMAL_DIG__ 17
 #endif
@@ -325,9 +328,6 @@
 #endif
 #ifndef __ULFRACT_MIN__
 #define __ULFRACT_MIN__ 0.0ULR
-#endif
-#ifndef STM32F103VE
-#define STM32F103VE 1
 #endif
 #ifndef __LDBL_HAS_QUIET_NAN__
 #define __LDBL_HAS_QUIET_NAN__ 1
@@ -499,8 +499,8 @@
 #ifndef __GXX_ABI_VERSION
 #define __GXX_ABI_VERSION 1010
 #endif
-#ifndef STM32F103xE
-#define STM32F103xE 1
+#ifndef STM32F103xB
+#define STM32F103xB 1
 #endif
 #ifndef __UTA_FBIT__
 #define __UTA_FBIT__ 64

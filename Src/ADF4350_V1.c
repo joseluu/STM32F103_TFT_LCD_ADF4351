@@ -10,11 +10,13 @@
 #include <string.h>  // for memcpy
 #include "board_config.h"
 #include "ADF4350_V1.h"
+#include "ADF4350_Messages.h"
 
 
 void WriteToADF4350(unsigned char count, unsigned char *buf);
 void ReadFromADF4350(unsigned char count, unsigned char *buf);
 
+static unsigned long Register_Buf[6];
 static unsigned int Fraction, Integer;
 static unsigned char Reg_Buf[6];
 static double RF_Fre_Value;
@@ -290,20 +292,25 @@ void RF_OUT(void)
 	_SYNC(0);
 }
 
+#define CURRENT_FREQ 6
+#define START_FREQ 7
+#define STOP_FREQ 8
+#define STEP_FREQ 9
+#define TIME_STEP 10
 void reset_all_reg(void)
 {
-		Register_Buf[5]=0x00580005;
-		Register_Buf[4]=0x00cc803c;
-	  Register_Buf[3]=0x000004B3;
-		Register_Buf[2]=0x00004E42;
-	  Register_Buf[1]=0x08008011;
-	  Register_Buf[0]=0x00400000;
+	Register_Buf[5]=0x00580005;
+	Register_Buf[4]=0x00cc803c;
+	Register_Buf[3]=0x000004B3;
+	Register_Buf[2]=0x00004E42;
+	Register_Buf[1]=0x08008011;
+	Register_Buf[0]=0x00400000;
 	
-	  Register_Buf[6]=400000; // 400MHz
-	  Register_Buf[7]=35;
-		Register_Buf[8]=1000;
-	  Register_Buf[9]=100;
-	  Register_Buf[10]=1000;
+	sweepParameters.current = 400000; // 400MHz
+	sweepParameters.start = 35;
+	sweepParameters.stop = 1000;
+	sweepParameters.step = 100;
+	sweepParameters.timeStep = 1000;
 	
 }
 
@@ -380,7 +387,7 @@ void StartSweep(unsigned long Start,
 
 
 void SweepTimerTick(void){ // interrupt processing routine
-	unsigned long temp = Register_Buf[10] / 100; // timer is every 100 us
+	unsigned long temp = sweepParameters.timeStep / 100; // timer is every 100 us
 	if (Sweep_Time_Counter++ >= temp) {
 		Sweep_Time_Counter = 0;
 		if (Sweep_DIR_Flag == 0) {

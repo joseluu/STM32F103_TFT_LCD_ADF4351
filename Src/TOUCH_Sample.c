@@ -95,17 +95,18 @@ void MainTask(void) {
 
 	Touch_Initialize();
 
-	//GUI_CURSOR_Show();
-	GUI_SetColor(GUI_BLUE);
+	GUI_CURSOR_Show();
+//	GUI_SetColor(GUI_BLUE);
 	GUI_Clear();
 //	GUI_DispString("Starting ...");
 	WM_HWIN hWin;
 	hWin = CreateFramewin();			// écran avec barre du haut " ADF 4351 PLL "
 
-	 	EDIT_SetCursorAtPixel(0,0);
-	GUI_Exec();
+	//EDIT_SetCursorAtPixel(0,0);
 	
 	while (1) {
+		GUI_Exec();
+		GUI_Delay(10);
 	}
 }	
 	

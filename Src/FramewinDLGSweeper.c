@@ -20,10 +20,12 @@
 
 // USER START (Optionally insert additional includes)
 #include "DIALOG.h"
-#include "FrameWinDLGSweeper.h"
+#include "FramewinDLGSweeper.h"
 #include "ADF4350_Messages.h"
+#include "ADF4350_V1.h"
+#include <stdbool.h>
+#include <stdio.h>
 
-extern unsigned long Register_Buf[12];
 
 /*********************************************************************
 *
@@ -96,6 +98,32 @@ extern unsigned long Register_Buf[12];
 */
 
 // USER START (Optionally insert additional static data)
+#define ID_BUTTON_M7 ID_BUTTON_0
+#define ID_BUTTON_P7 ID_BUTTON_1
+#define ID_BUTTON_M6 ID_BUTTON_3
+#define ID_BUTTON_P6 ID_BUTTON_2
+#define ID_BUTTON_M5 ID_BUTTON_5
+#define ID_BUTTON_P5 ID_BUTTON_4
+#define ID_BUTTON_M4 ID_BUTTON_7
+#define ID_BUTTON_P4 ID_BUTTON_6
+#define ID_BUTTON_M3 ID_BUTTON_10
+#define ID_BUTTON_P3 ID_BUTTON_8
+#define ID_BUTTON_M2 ID_BUTTON_12
+#define ID_BUTTON_P2 ID_BUTTON_9
+#define ID_BUTTON_M1 ID_BUTTON_13
+#define ID_BUTTON_P1 ID_BUTTON_11
+
+#define ID_EDIT_SWEEP_START ID_EDIT_0
+#define ID_EDIT_SWEEP_STOP  ED_EDIT_1
+
+#define ID_EDIT_DIGIT_7 ID_EDIT_2
+#define ID_EDIT_DIGIT_6 ID_EDIT_3
+#define ID_EDIT_DIGIT_5 ID_EDIT_4
+#define ID_EDIT_DIGIT_4 ID_EDIT_5
+#define ID_EDIT_DIGIT_3 ID_EDIT_6
+#define ID_EDIT_DIGIT_2 ID_EDIT_7
+#define ID_EDIT_DIGIT_1 ID_EDIT_8
+
 // USER END
 
 /*********************************************************************
@@ -152,6 +180,147 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 */
 
 // USER START (Optionally insert additional static code)
+bool bEditingField;
+int savedFrequency;
+WM_HWIN hWinStartFrequency;
+WM_HWIN hWinStopFrequency;
+WM_HWIN hWinStepFrequency;
+WM_HWIN hWinTimeStep;
+
+
+volatile int frequencyDigits[7];
+typedef struct _digitItem {
+	int idButtonMinus;
+	int idButtonPlus;
+	WM_HWIN hWinHandle;
+} digitItem;
+
+volatile digitItem digitItems[7];
+
+int getFrequencyFromDisplay(bool bRestore);
+
+void setDigit(int nDigit, char val){
+	char szVal[2];
+	szVal[1] = 0;
+	szVal[0] = val;
+	EDIT_SetText(digitItems[nDigit].hWinHandle, szVal);
+}
+void displayFrequencyDigits(){
+	bool bZero = true;
+	for (int i=6;i>=0;i--){
+		if (frequencyDigits[i] == 0 && bZero) {
+			setDigit(i, ' ');
+		} else {
+			if (frequencyDigits[i] != 0){
+				bZero = false;
+			}
+			setDigit(i, '0' + frequencyDigits[i]);
+		}
+	}
+}
+
+void setMainFrequencyDisplay(int newFrequency,bool bSave){
+	if (bSave) {
+		savedFrequency = getFrequencyFromDisplay(false);
+	}
+	for (int i=0;i<7;i++){
+		frequencyDigits[i] = newFrequency % 10;
+		newFrequency /= 10;
+	}
+	displayFrequencyDigits();
+}
+
+void onDigitButtonAction(int NCode){
+	for (int i=0;i<7;i++) {
+		if (digitItems[i].idButtonMinus == NCode) {
+			frequencyDigits[i] -= 1;
+			frequencyDigits[i] %= 10;
+			setDigit(i, '0' + frequencyDigits[i]);
+		} else if (digitItems[i].idButtonPlus == NCode){
+			frequencyDigits[i] += 1;
+			frequencyDigits[i] %= 10;
+			setDigit(i, '0' + frequencyDigits[i]);
+		}
+	}
+	if (! bEditingField){
+		sweepParameters.current = getFrequencyFromDisplay(false);
+		DoRfOut();
+	}
+}
+int getFrequencyFromDisplay(bool bRestore){
+	int nResult = 0;
+	for (int i=6;i>=0;i--){
+		nResult += frequencyDigits[i];
+		if (i != 0 ) {
+			nResult *= 10;
+		}
+	}
+	if (bRestore){
+		setMainFrequencyDisplay(savedFrequency, false);
+	}
+	return nResult;
+}
+char buffer[8];
+void setEditValue(int newValue,WM_HWIN hItem){
+	char * szVal = itoa(newValue);
+	//snprintf(buffer, 8, "%7d", newValue);
+	EDIT_SetText(hItem, szVal);
+}
+
+void setStartFrequency(int newValue){
+	setEditValue(newValue, hWinStartFrequency);
+	sweepParameters.start = newValue;
+}
+void setStopFrequency(int newValue){
+	setEditValue(newValue, hWinStopFrequency);
+	sweepParameters.stop = newValue;
+}
+void setStepFrequency(int newValue){
+	setEditValue(newValue, hWinStepFrequency);
+	sweepParameters.step = newValue;
+}
+void setTimeStep(int newValue){
+	setEditValue(newValue, hWinTimeStep);
+	sweepParameters.timeStep = newValue;
+}
+void onStartSweep(){
+	DoStartSweep();
+}
+void onStopSweep(){
+	DoStartSweep();
+}
+void onStartFrequencyModify(){
+	if (!bEditingField) {
+		setMainFrequencyDisplay(sweepParameters.start, true);
+	} else {
+		setStartFrequency(getFrequencyFromDisplay(true));
+	}
+	bEditingField = ~bEditingField;
+}
+void onStopFrequencyModify(){
+	if (!bEditingField) {
+		setMainFrequencyDisplay(sweepParameters.stop, true);
+	} else {
+		setStopFrequency(getFrequencyFromDisplay(true));
+	}
+	bEditingField = ~bEditingField;
+}
+void onStepFrequencyModify(){
+	if (!bEditingField) {
+		setMainFrequencyDisplay(sweepParameters.step, true);
+	} else {
+		setStepFrequency(getFrequencyFromDisplay(true));
+	}
+	bEditingField = ~bEditingField;
+}
+void onTimeStepModify(){
+	if (!bEditingField) {
+		setMainFrequencyDisplay(sweepParameters.timeStep, true);
+	} else {
+		setTimeStep(getFrequencyFromDisplay(true));
+	}
+	bEditingField = ~bEditingField;
+}
 // USER END
 
 /*********************************************************************
@@ -263,7 +432,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
     EDIT_SetText(hItem, "SWEEP");
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x000000FF);
-    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetTextAlign(hItem, GUI_TA_RIGHT | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_16B_ASCII);
     //
     // Initialization of 'SW_STOP'
@@ -271,7 +440,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_1);
     EDIT_SetText(hItem, "STOP");
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x000000FF);
-    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+	EDIT_SetTextAlign(hItem, GUI_TA_RIGHT | GUI_TA_VCENTER);
     EDIT_SetFont(hItem, GUI_FONT_16B_ASCII);
     //
     // Initialization of 'Edit_7'
@@ -340,19 +509,19 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_9);
     EDIT_SetText(hItem, "0 000 000");
-    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+	  EDIT_SetTextAlign(hItem, GUI_TA_RIGHT | GUI_TA_VCENTER);
     //
     // Initialization of 'Edit_Pas'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_10);
     EDIT_SetText(hItem, "0 000");
-    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+	  EDIT_SetTextAlign(hItem, GUI_TA_RIGHT | GUI_TA_VCENTER);
     //
     // Initialization of 'Edit_Start_F'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_11);
     EDIT_SetText(hItem, "0 000 000");
-    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+	  EDIT_SetTextAlign(hItem, GUI_TA_RIGHT | GUI_TA_VCENTER);
     //
     // Initialization of 'Edit_Vitesse'
     //
@@ -376,6 +545,32 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     hItem = WM_GetDialogItem(pMsg->hWin, ID_PROGBAR_0);
     PROGBAR_SetFont(hItem, GUI_FONT_16B_ASCII);
     // USER START (Optionally insert additional code for further widget initialization)
+	digitItems[0].hWinHandle = WM_GetDialogItem(pMsg->hWin, ID_EDIT_DIGIT_1);
+	digitItems[1].hWinHandle = WM_GetDialogItem(pMsg->hWin, ID_EDIT_DIGIT_2);
+	digitItems[2].hWinHandle = WM_GetDialogItem(pMsg->hWin, ID_EDIT_DIGIT_3);
+	digitItems[3].hWinHandle = WM_GetDialogItem(pMsg->hWin, ID_EDIT_DIGIT_4);
+	digitItems[4].hWinHandle = WM_GetDialogItem(pMsg->hWin, ID_EDIT_DIGIT_5);
+	digitItems[5].hWinHandle = WM_GetDialogItem(pMsg->hWin, ID_EDIT_DIGIT_6);
+	digitItems[6].hWinHandle = WM_GetDialogItem(pMsg->hWin, ID_EDIT_DIGIT_7);
+	digitItems[0].idButtonMinus = ID_BUTTON_M1;
+	digitItems[0].idButtonPlus =  ID_BUTTON_P1;
+	digitItems[1].idButtonMinus = ID_BUTTON_M2;
+	digitItems[1].idButtonPlus =  ID_BUTTON_P2;
+	digitItems[2].idButtonMinus = ID_BUTTON_M3;
+	digitItems[2].idButtonPlus =  ID_BUTTON_P3;
+	digitItems[3].idButtonMinus = ID_BUTTON_M4;
+	digitItems[3].idButtonPlus =  ID_BUTTON_P4;
+	digitItems[4].idButtonMinus = ID_BUTTON_M5;
+	digitItems[4].idButtonPlus =  ID_BUTTON_P5;
+	digitItems[5].idButtonMinus = ID_BUTTON_M6;
+	digitItems[5].idButtonPlus =  ID_BUTTON_P6;
+	digitItems[6].idButtonMinus = ID_BUTTON_M7;
+	digitItems[6].idButtonPlus =  ID_BUTTON_P7;
+	hWinStartFrequency = WM_GetDialogItem(pMsg->hWin, ID_EDIT_11);
+	hWinStopFrequency = WM_GetDialogItem(pMsg->hWin, ID_EDIT_9);
+	hWinStepFrequency = WM_GetDialogItem(pMsg->hWin, ID_EDIT_10);
+	hWinTimeStep = WM_GetDialogItem(pMsg->hWin, ID_EDIT_12);
+	  setMainFrequencyDisplay(sweepParameters.current, false);
     // USER END
     break;
   case WM_NOTIFY_PARENT:
@@ -386,6 +581,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -400,6 +596,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -414,6 +611,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -428,6 +626,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -442,6 +641,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -456,6 +656,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -470,6 +671,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -484,6 +686,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -498,6 +701,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -512,6 +716,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -526,6 +731,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -540,6 +746,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -554,6 +761,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -568,6 +776,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onDigitButtonAction(Id);
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -582,6 +791,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onStartSweep();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -600,6 +810,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onStopSweep();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -744,6 +955,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onStartFrequencyModify();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -758,6 +970,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onStopFrequencyModify();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -772,6 +985,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onStepFrequencyModify();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -786,6 +1000,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+	      onTimeStepModify();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
