@@ -570,7 +570,11 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 	hWinStopFrequency = WM_GetDialogItem(pMsg->hWin, ID_EDIT_9);
 	hWinStepFrequency = WM_GetDialogItem(pMsg->hWin, ID_EDIT_10);
 	hWinTimeStep = WM_GetDialogItem(pMsg->hWin, ID_EDIT_12);
-	  setMainFrequencyDisplay(sweepParameters.current, false);
+	setMainFrequencyDisplay(sweepParameters.current, false);
+	setStartFrequency(sweepParameters.start);
+	setStopFrequency(sweepParameters.stop);
+	setStepFrequency(sweepParameters.step);
+	setTimeStep(sweepParameters.timeStep);
     // USER END
     break;
   case WM_NOTIFY_PARENT:

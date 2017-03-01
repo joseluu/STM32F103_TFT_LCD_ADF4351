@@ -51,7 +51,6 @@ Requirements: WindowManager - ( )
 #include "GUI.h"
 #include "board_config.h"
 #include "LCDConf_F103_24.h"
-#include "ADF4350_V1.h"
 #include "Board_Touch.h"
 #include "FrameWinDLGSweeper.h"
 
@@ -87,10 +86,6 @@ void MainTask(void) {
 	int           xPhys ;
 	int           yPhys ;
 	
-	ADF4351_Init();
-	SetCurrentFrequency(248);
-	RF_OUT();
-
 	GUI_Init();	
 
 	Touch_Initialize();

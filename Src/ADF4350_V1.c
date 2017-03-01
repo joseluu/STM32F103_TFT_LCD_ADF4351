@@ -297,7 +297,7 @@ void RF_OUT(void)
 #define STOP_FREQ 8
 #define STEP_FREQ 9
 #define TIME_STEP 10
-void reset_all_reg(void)
+void reset_all_reg(int initialFrequency)
 {
 	Register_Buf[5]=0x00580005;
 	Register_Buf[4]=0x00cc803c;
@@ -306,7 +306,7 @@ void reset_all_reg(void)
 	Register_Buf[1]=0x08008011;
 	Register_Buf[0]=0x00400000;
 	
-	sweepParameters.current = 400000; // 400MHz
+	sweepParameters.current = initialFrequency;
 	sweepParameters.start = 35;
 	sweepParameters.stop = 1000;
 	sweepParameters.step = 100;
@@ -315,11 +315,11 @@ void reset_all_reg(void)
 }
 
 //*********************************************************************
-void ADF4351_Init(void)
+void ADF4351_Init(int initialFrequency)
 {
 	initPorts();
 	SET_CE();
-	reset_all_reg();
+	reset_all_reg(initialFrequency);
 
 	Reg_Buf[3] = 0x00;
 	Reg_Buf[2] = 0x58;
