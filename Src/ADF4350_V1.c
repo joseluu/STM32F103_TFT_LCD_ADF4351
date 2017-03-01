@@ -306,7 +306,7 @@ void reset_all_reg(int initialFrequency)
 	Register_Buf[1]=0x08008011;
 	Register_Buf[0]=0x00400000;
 	
-	sweepParameters.current = initialFrequency;
+	sweepParameters.current = initialFrequency *1000;
 	sweepParameters.start = 35;
 	sweepParameters.stop = 1000;
 	sweepParameters.step = 100;
@@ -358,7 +358,8 @@ void ADF4351_Init(int initialFrequency)
  	Reg_Buf[0] = 0x00;				//(DB14-3:0H)FRAC value is 0;
 	WriteToADF4350(4,Reg_Buf);		//(DB30-15:140H)INT value is 320;
 
-
+	SetCurrentFrequency(initialFrequency);
+	RF_OUT();//???
 }
 
 
