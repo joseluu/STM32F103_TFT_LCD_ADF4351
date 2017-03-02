@@ -307,8 +307,8 @@ void reset_all_reg(int initialFrequency)
 	Register_Buf[0]=0x00400000;
 	
 	sweepParameters.current = initialFrequency *1000;
-	sweepParameters.start = 35;
-	sweepParameters.stop = 1000;
+	sweepParameters.start = 35000;
+	sweepParameters.stop = 1000000;
 	sweepParameters.step = 100;
 	sweepParameters.timeStep = 1000;
 	
@@ -372,8 +372,8 @@ void StartSweep(unsigned long Start,
 				double  Delta){
 	if (Start < Stop) {
 // Initialize global variables
-		Start_Fre_value = Start;
-		Stop_Fre_value = Stop;
+		Start_Fre_value = Start/1000.0;
+		Stop_Fre_value = Stop/1000.0;
 		Sweep_Time_value = Sweep;
 		Delta_Fre_value = Delta;
 		Sweep_Time_Counter = 0;

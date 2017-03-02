@@ -182,6 +182,8 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 // USER START (Optionally insert additional static code)
 bool bEditingField;
 int savedFrequency;
+typedef enum { frequencyCurrent, frequencyStart, frequencyStop, frequencyStep, frequencyTimeStep } frequencyDisplayType;
+frequencyDisplayType displayShows;
 WM_HWIN hWinStartFrequency;
 WM_HWIN hWinStopFrequency;
 WM_HWIN hWinStepFrequency;
@@ -219,7 +221,8 @@ void displayFrequencyDigits(){
 	}
 }
 
-void setMainFrequencyDisplay(int newFrequency,bool bSave){
+void setMainFrequencyDisplay(int newFrequency, bool bSave)
+{
 	if (bSave) {
 		savedFrequency = getFrequencyFromDisplay(false);
 	}
@@ -234,6 +237,9 @@ void onDigitButtonAction(int NCode){
 	for (int i=0;i<7;i++) {
 		if (digitItems[i].idButtonMinus == NCode) {
 			frequencyDigits[i] -= 1;
+			if (frequencyDigits[i] < 0) {
+				frequencyDigits[i] += 10;
+			}
 			frequencyDigits[i] %= 10;
 			setDigit(i, '0' + frequencyDigits[i]);
 		} else if (digitItems[i].idButtonPlus == NCode){
@@ -262,8 +268,7 @@ int getFrequencyFromDisplay(bool bRestore){
 }
 char buffer[8];
 void setEditValue(int newValue,WM_HWIN hItem){
-	char * szVal = itoa(newValue);
-	//snprintf(buffer, 8, "%7d", newValue);
+	char * szVal = (char*) itoa(newValue,buffer,10);
 	EDIT_SetText(hItem, szVal);
 }
 
@@ -287,39 +292,55 @@ void onStartSweep(){
 	DoStartSweep();
 }
 void onStopSweep(){
-	DoStartSweep();
+	DoStopSweep();
 }
 void onStartFrequencyModify(){
-	if (!bEditingField) {
+	if (displayShows == frequencyCurrent) {
+		displayShows = frequencyStart;
 		setMainFrequencyDisplay(sweepParameters.start, true);
-	} else {
+	} else if (displayShows == frequencyStart) {
 		setStartFrequency(getFrequencyFromDisplay(true));
+		displayShows = frequencyCurrent;
+	} else {
+		return;
 	}
-	bEditingField = ~bEditingField;
+	bEditingField = !bEditingField;
 }
 void onStopFrequencyModify(){
-	if (!bEditingField) {
+	if (displayShows == frequencyCurrent) {
+		displayShows = frequencyStop;
 		setMainFrequencyDisplay(sweepParameters.stop, true);
-	} else {
+	} else if (displayShows == frequencyStop) {
 		setStopFrequency(getFrequencyFromDisplay(true));
+		displayShows = frequencyCurrent;
+	} else {
+		return;
 	}
-	bEditingField = ~bEditingField;
+	bEditingField = !bEditingField;
 }
 void onStepFrequencyModify(){
-	if (!bEditingField) {
+	if (displayShows == frequencyCurrent) {
+		displayShows = frequencyStep;
 		setMainFrequencyDisplay(sweepParameters.step, true);
-	} else {
+	} else if (displayShows == frequencyStop) {
 		setStepFrequency(getFrequencyFromDisplay(true));
+		displayShows = frequencyCurrent;
+	} else {
+		return;
 	}
-	bEditingField = ~bEditingField;
+	bEditingField = !bEditingField;
 }
 void onTimeStepModify(){
-	if (!bEditingField) {
+	if (displayShows == frequencyCurrent) {
+		displayShows = frequencyTimeStep;
 		setMainFrequencyDisplay(sweepParameters.timeStep, true);
-	} else {
+	} else if (displayShows == frequencyTimeStep) {
 		setTimeStep(getFrequencyFromDisplay(true));
+		displayShows = frequencyCurrent;
+	} else {
+		return;
 	}
-	bEditingField = ~bEditingField;
+	bEditingField = !bEditingField;
 }
 // USER END
 

@@ -52,6 +52,7 @@ void DoStopSweep()
 	if (bStarted) {
 		SweepTimerStop();	
 		bStarted = 0;
+		DoRfOut(); // restore current frequency
 	}
 }
 
