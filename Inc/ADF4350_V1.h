@@ -46,19 +46,17 @@
 
 
 
-void ADF4351_Init(void);
+void ADF4351_Init(int initialFrequency);
 void RF_OUT(void);
 void SweepTimerTick(void);
 double GetCurrentFrequency(void);
 double SetCurrentFrequency(double newFrequency);
-void reset_all_reg(void);
+void reset_all_reg(int initialFrequency);
 void StartSweep(unsigned long Start, 
 	unsigned long  Stop, 
 	unsigned long  Sweep_Tim, 
 	double  Delta);
 void SweepTimerStop(void);
-
-extern unsigned long Register_Buf[12];
 
 
 #endif
