@@ -17,6 +17,7 @@ int GetRefClk();
 void DoRfOut(void);
 void DoStartSweep(void);
 void DoStopSweep(void);
+void SweepProgress(int percentSweep);
 
 #endif
 

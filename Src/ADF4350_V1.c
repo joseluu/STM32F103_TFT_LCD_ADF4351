@@ -27,20 +27,19 @@ static unsigned long Sweep_Time_value;
 static double Current_Fre;
 
 
+int percentSweep = 0;
+int percentSweepIncrement = 0;
+
 
 extern void SweepTimerStart(void); 
 extern void SweepTimerStop(void);
 
-double GetCurrentFrequency(){
-	return RF_Fre_Value;
-}
-
-double SetCurrentFrequency(double newFrequency)
+int SetCurrentFrequency(int newFrequencyKHz)
 {
 	double value = RF_Fre_Value;
-	Current_Fre = newFrequency;
+	Current_Fre = newFrequencyKHz / 1000.0;
 	RF_Fre_Value = Current_Fre;
-	return value;
+	return value*1000;
 }
 
 /* Delay routine for SPI signaling */
@@ -292,11 +291,6 @@ void RF_OUT(void)
 	_SYNC(0);
 }
 
-#define CURRENT_FREQ 6
-#define START_FREQ 7
-#define STOP_FREQ 8
-#define STEP_FREQ 9
-#define TIME_STEP 10
 void reset_all_reg(int initialFrequency)
 {
 	Register_Buf[5]=0x00580005;
@@ -306,11 +300,11 @@ void reset_all_reg(int initialFrequency)
 	Register_Buf[1]=0x08008011;
 	Register_Buf[0]=0x00400000;
 	
-	sweepParameters.current = initialFrequency *1000;
-	sweepParameters.start = 35000;
-	sweepParameters.stop = 1000000;
+	sweepParameters.current = initialFrequency ;
+	sweepParameters.start = 144000;
+	sweepParameters.stop = 146000;
 	sweepParameters.step = 100;
-	sweepParameters.timeStep = 1000;
+	sweepParameters.timeStep = 100;
 	
 }
 
@@ -377,28 +371,44 @@ void StartSweep(unsigned long Start,
 		Sweep_Time_value = Sweep;
 		Delta_Fre_value = Delta;
 		Sweep_Time_Counter = 0;
+		percentSweepIncrement = 100/((Stop_Fre_value-Start_Fre_value)/Delta_Fre_value);
 
 		Current_Fre = Start_Fre_value;
 		Sweep_DIR_Flag = 0;
 		RF_Fre_Value = Start_Fre_value;
 		RF_OUT();
+		
 		SweepTimerStart();
 	}
 }
 
 
 void SweepTimerTick(void){ // interrupt processing routine
-	unsigned long temp = sweepParameters.timeStep / 100; // timer is every 100 us
+	unsigned long temp = sweepParameters.timeStep *20; // timer is every 100 us
 	if (Sweep_Time_Counter++ >= temp) {
 		Sweep_Time_Counter = 0;
 		if (Sweep_DIR_Flag == 0) {
 			Current_Fre += Delta_Fre_value;
+
+			SweepProgress(percentSweep);
+			percentSweep += percentSweepIncrement;
+			if (percentSweep >= 100){
+				percentSweep = 100;
+			}   
+			
 			if (Current_Fre >= Stop_Fre_value) {
 				Current_Fre = Stop_Fre_value;
 				Sweep_DIR_Flag = 1;
 			}
 		} else {
 			Current_Fre -= Delta_Fre_value;
+
+			SweepProgress(percentSweep);
+			percentSweep -= percentSweepIncrement;
+			if (percentSweep <= 0) {
+				percentSweep = 0;
+			}		
+			
 			if (Current_Fre <= Start_Fre_value) {
 				Current_Fre = Start_Fre_value;
 				Sweep_DIR_Flag = 0;

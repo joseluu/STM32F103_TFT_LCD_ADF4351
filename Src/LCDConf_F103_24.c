@@ -456,7 +456,7 @@ void LCD_X_Config(void) {
   // Orientation
   //
 #ifdef SWEEPER
-	Config.Orientation= GUI_SWAP_XY | GUI_MIRROR_Y;   // pour ecran_cricri
+	Config.Orientation= GUI_SWAP_XY | GUI_MIRROR_Y;
 #else
 	Config.Orientation = GUI_SWAP_XY;
 #endif
@@ -491,7 +491,7 @@ void LCD_X_Config(void) {
   PortAPI.pfReadM8_A1  = LcdReadDataMultiple8;
 #endif
 #ifdef SWEEPER
-	GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66708, GUIDRV_FLEXCOLOR_M16C0B16);    //// modif cricri
+	GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66708, GUIDRV_FLEXCOLOR_M16C0B16);
 #else
 	GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66709, GUIDRV_FLEXCOLOR_M16C0B8);
 #endif
@@ -563,7 +563,7 @@ void MX_GPIO_Init(void)
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 	
-				/*Configure GPIO pins : PA IN  pour touch panel */									// modif cricri
+				/*Configure GPIO pins : PA IN  pour touch panel */
 	GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 ;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;

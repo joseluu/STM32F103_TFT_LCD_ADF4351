@@ -96,7 +96,8 @@ int Read_X(void)
     WR_CMD(CHX);
    // while(TP_BUSY);
     Delayus(5);
-	i=(320-(RD_AD()/12.8));							// modif cricri pour inverser sens lecture X
+//    i=(320-(RD_AD()/12.8));							// version origine modif cricri pour inverser sens lecture X
+    i=(338-(RD_AD()/11));							// modif cricri pour inverser sens lecture X
     return i;   
 }
 //====================================================================================
@@ -106,7 +107,8 @@ int Read_Y(void)
     WR_CMD(CHY);
     //while(TP_BUSY);
     Delayus(5);
-    i=(RD_AD()/16.5);
+    i=((RD_AD()/15.5)-10);
+//    i=(RD_AD()/16.5);					version origine
     return i;    
 }
 //====================================================================================

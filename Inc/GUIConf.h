@@ -93,5 +93,6 @@ Purpose     : Configures emWins abilities, fonts etc.
 #define GUI_WINSUPPORT                (1)    /* Use window manager */
 #define GUI_SUPPORT_MEMDEV            (0)    /* Memory device package available */
 #define GUI_SUPPORT_DEVICES           (1)    /* Enable use of device pointers */
+#define WIDGET_USE_FLEX_SKIN 1
 
 #endif  /* Avoid multiple inclusion */

@@ -5,6 +5,7 @@
 #include "WM.h"
 WM_HWIN CreateFramewin(void);
 
-void DisplayCurrentFrequency(WM_HWIN hWin, double frequency);
+void DisplayCurrentFrequency(WM_HWIN hWin, int frequencyKHz);
+void DisplaySweepProgress(int percentValue);
 
 #endif

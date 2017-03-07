@@ -1,12 +1,15 @@
 
 #include "ADF4350_Messages.h"
 #include "ADF4350_V1.h"
+#include "FrameWinDLGSweeper.h"
 
 int GetRefClk(){
 	return REF_CLK;
 }
 
-
+void SweepProgress(int percentSweep){
+	DisplaySweepProgress(percentSweep);
+}
 
 void DoRfOut()
 {
@@ -15,7 +18,6 @@ void DoRfOut()
 	op = temp % 100;
 	temp -= op;
 	n = temp;
-	n /= 1000;
 	SetCurrentFrequency(n);
 	RF_OUT();//���
 }

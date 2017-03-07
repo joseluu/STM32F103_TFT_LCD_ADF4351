@@ -90,7 +90,9 @@ void MainTask(void) {
 
 	Touch_Initialize();
 
+#ifndef SWEEPER
 	GUI_CURSOR_Show();
+#endif
 //	GUI_SetColor(GUI_BLUE);
 	GUI_Clear();
 //	GUI_DispString("Starting ...");
@@ -105,19 +107,9 @@ void MainTask(void) {
 	}
 }	
 	
-	/*
 
-//	SynchroScope();          // modif cricri
-  // Infinite loop //
-	while (1) {
-//		DisplayCurrentFrequency(hWin, GetCurrentFrequency());
-//		k_TouchUpdate();          // modif cricri
-//		SynchroScope();
-		GUI_Exec();
-		GUI_Delay(10);
-	}
-}
-*/
+
+
 
 /*************************** End of file ****************************/
 

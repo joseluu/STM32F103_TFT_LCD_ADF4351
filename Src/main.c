@@ -137,7 +137,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 	HAL_UART_Transmit(&huart1, "begin\n\r", 7, 1000);
-	ADF4351_Init(248);
+	ADF4351_Init(144300);
 	Touch_Initialize();
 	MainTask();
   /* USER CODE END 2 */
