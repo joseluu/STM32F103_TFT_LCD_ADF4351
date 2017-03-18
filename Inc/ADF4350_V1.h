@@ -53,8 +53,8 @@ int SetCurrentFrequency(int newFrequencyKHz);
 void reset_all_reg(int initialFrequency);
 void StartSweep(unsigned long Start, 
 	unsigned long  Stop, 
-	unsigned long  Sweep_Tim, 
-	double  Delta);
+	unsigned long  SweepDeltaTime, 
+	unsigned long  SweepDeltaFrequency);
 void SweepTimerStop(void);
 
 void ProgBar(void);

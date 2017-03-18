@@ -8,6 +8,7 @@
 #include "stm32f1xx_hal.h"
 #include <math.h>
 #include <string.h>  // for memcpy
+#include <stdbool.h>
 #include "board_config.h"
 #include "ADF4350_V1.h"
 #include "ADF4350_Messages.h"
@@ -17,18 +18,19 @@ void WriteToADF4350(unsigned char count, unsigned char *buf);
 void ReadFromADF4350(unsigned char count, unsigned char *buf);
 
 static unsigned long Register_Buf[6];
+static unsigned long Register_Previous[6];
 static unsigned int Fraction, Integer;
 static unsigned char Reg_Buf[6];
 static int RF_Fre_Value;
 static unsigned long Start_Fre_value;
 static unsigned long Stop_Fre_value;
-static double Delta_Fre_value;
+static unsigned long Delta_Fre_value;
 static unsigned long Sweep_Time_value;
-static double SweepCurrentFreq;
+static unsigned long SweepCurrentFreq;
 
 
-int percentSweep = 0;
-int percentSweepIncrement = 0;
+double percentSweep = 0;
+double percentSweepIncrement = 0;
 
 
 extern void SweepTimerStart(void); 
@@ -185,22 +187,19 @@ void RF_OUT(void)
 			  div=1;
 		}
 		
-	RF_Fre_Value *= div;
-	Register_Buf[0] = (RF_Fre_Value / 1000) << 15 | (RF_Fre_Value%1000) << 3;
+	unsigned long oscillatorFrequency = RF_Fre_Value * div;
+	Register_Buf[0] = (oscillatorFrequency / 1000) << 15 | (oscillatorFrequency % 1000) << 3;
 		
 	_SYNC(1);
-		memcpy(&Reg_Buf, &Register_Buf[5], 4);
-		WriteToADF4350(4,Reg_Buf);
-		memcpy(&Reg_Buf, &Register_Buf[4], 4);
-		WriteToADF4350(4,Reg_Buf);
-		memcpy(&Reg_Buf, &Register_Buf[3], 4);
-		WriteToADF4350(4,Reg_Buf);
-		memcpy(&Reg_Buf, &Register_Buf[2], 4);
-		WriteToADF4350(4,Reg_Buf);
-		memcpy(&Reg_Buf, &Register_Buf[1], 4);
-		WriteToADF4350(4,Reg_Buf);
-		memcpy(&Reg_Buf, &Register_Buf[0], 4);
-		WriteToADF4350(4,Reg_Buf);	
+	for (int i=5;i>=0;i--){
+		bool mustWrite = false;
+		if (mustWrite || (Register_Buf[i] != Register_Previous[i])) {
+			mustWrite = true; // we must finish up to register 0 once we start writing into registers
+			memcpy(&Reg_Buf, &Register_Buf[i], 4);
+			WriteToADF4350(4,Reg_Buf);
+			Register_Previous[i] = Register_Buf[i];// remember value so that we can skip it next time
+		}
+	}
 	_SYNC(0);
 }
 
@@ -219,19 +218,24 @@ void reset_all_reg(int initialFrequency)
 	Register_Buf[3]=0x00000003 | CLOCK_DIVIDER << 3;
 #define R_COUNTER REF_CLK  // 1 MHz PFD
 #define DOUBLE_BUFFER 1
-//(DB6=1)set PD polarity is positive;(DB7=1)LDP is 6nS;
+//(DB6=1)set PD polarity is positive;
+//(DB7=1)LDP is 6nS;
 //(DB8=0)enable fractional-N digital lock detect;
 //(DB12-9:7H)set Icp 2.50 mA;
 	Register_Buf[2] = 0x000000E42 | DOUBLE_BUFFER << 13 | R_COUNTER << 14;
 
 #define PRESCALER_8_9 1
 #define PHASE_VALUE 1
-#define MODULUS_VALUE 2
+#define MODULUS_VALUE 1000 // so that we get KHz resolution
 	Register_Buf[1]=0x00000001 | PRESCALER_8_9 << 27 | PHASE_VALUE << 15 | MODULUS_VALUE << 3;
+
 #define INTEGER_VALUE 100 // MHz
 #define FRACTIONAL_VALUE 0 // KHz
 	Register_Buf[0]= INTEGER_VALUE << 15 | FRACTIONAL_VALUE << 3;
 	
+	for (int i=0;i<6;i++){
+		Register_Previous[i] = 0;
+	}
 	sweepParameters.current = initialFrequency ;
 	sweepParameters.start = 144500;
 	sweepParameters.stop = 145500;
@@ -247,24 +251,6 @@ void ADF4351_Init(int initialFrequency)
 	SET_CE();
 	reset_all_reg(initialFrequency);
 
-	memcpy(&Reg_Buf, &Register_Buf[5], 4);
-	WriteToADF4350(4, Reg_Buf);	
-
-	memcpy(&Reg_Buf, &Register_Buf[4], 4);
-	WriteToADF4350(4,Reg_Buf);		
-
-	memcpy(&Reg_Buf, &Register_Buf[3], 4);
-	WriteToADF4350(4,Reg_Buf);	
-
-	memcpy(&Reg_Buf, &Register_Buf[2], 4);
-	WriteToADF4350(4,Reg_Buf);		//(DB23-14:1H)R counter is 1
-
-	memcpy(&Reg_Buf, &Register_Buf[1], 4);
-	WriteToADF4350(4,Reg_Buf);
-
-	memcpy(&Reg_Buf, &Register_Buf[1], 4);
-	WriteToADF4350(4,Reg_Buf);
-
 	SetCurrentFrequency(initialFrequency);
 	RF_OUT();
 }
@@ -275,16 +261,17 @@ static unsigned char Sweep_DIR_Flag;
 
 void StartSweep(unsigned long Start, 
 				unsigned long  Stop, 
-				unsigned long  Sweep, 
-				double  Delta){
+				unsigned long  SweepDeltaTime, 
+				unsigned long  SweepDeltaFrequency)
+{
 	if (Start < Stop) {
 // Initialize global variables
-		Start_Fre_value = Start/1000.0;
-		Stop_Fre_value = Stop/1000.0;
-		Sweep_Time_value = Sweep;
-		Delta_Fre_value = Delta;
+		Start_Fre_value = Start;
+		Stop_Fre_value = Stop;
+		Sweep_Time_value = SweepDeltaTime;
+		Delta_Fre_value = SweepDeltaFrequency;
 		Sweep_Time_Counter = 0;
-		percentSweepIncrement = 100/((Stop_Fre_value-Start_Fre_value)/Delta_Fre_value);
+		percentSweepIncrement = 100.0/((Stop_Fre_value-Start_Fre_value)/Delta_Fre_value);
 
 		SweepCurrentFreq = Start_Fre_value;
 		Sweep_DIR_Flag = 0;
@@ -303,7 +290,7 @@ void SweepTimerTick(void){ // interrupt processing routine
 		if (Sweep_DIR_Flag == 0) {
 			SweepCurrentFreq += Delta_Fre_value;
 
-			SweepProgress(percentSweep);
+			SweepProgress((int)percentSweep);
 			percentSweep += percentSweepIncrement;
 			if (percentSweep >= 100){
 				percentSweep = 100;
@@ -327,7 +314,7 @@ void SweepTimerTick(void){ // interrupt processing routine
 				Sweep_DIR_Flag = 0;
 			}
 		}
-		RF_Fre_Value = 	SweepCurrentFreq*1000;
+		RF_Fre_Value = 	SweepCurrentFreq;
 		RF_OUT();
 	}
 }
