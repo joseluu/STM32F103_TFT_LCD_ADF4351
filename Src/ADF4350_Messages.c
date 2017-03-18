@@ -13,12 +13,7 @@ void SweepProgress(int percentSweep){
 
 void DoRfOut()
 {
-	unsigned long temp = sweepParameters.current, op;
-	double n;
-	op = temp % 100;
-	temp -= op;
-	n = temp;
-	SetCurrentFrequency(n);
+	SetCurrentFrequency(sweepParameters.current);
 	RF_OUT();//���
 }
 
