@@ -317,8 +317,8 @@
 #ifndef __UACCUM_MAX__
 #define __UACCUM_MAX__ 0XFFFFFFFFP-16UK
 #endif
-#ifndef STM32F103RB
-#define STM32F103RB 1
+#ifndef STM32F103RC
+#define STM32F103RC 1
 #endif
 #ifndef __DECIMAL_DIG__
 #define __DECIMAL_DIG__ 17
@@ -457,6 +457,9 @@
 #ifndef __UACCUM_MIN__
 #define __UACCUM_MIN__ 0.0UK
 #endif
+#ifndef flash_layout
+#define flash_layout 1
+#endif
 #ifndef __UACCUM_IBIT__
 #define __UACCUM_IBIT__ 16
 #endif
@@ -499,8 +502,8 @@
 #ifndef __GXX_ABI_VERSION
 #define __GXX_ABI_VERSION 1010
 #endif
-#ifndef STM32F103xB
-#define STM32F103xB 1
+#ifndef STM32F103xE
+#define STM32F103xE 1
 #endif
 #ifndef __UTA_FBIT__
 #define __UTA_FBIT__ 64
@@ -655,9 +658,6 @@
 #ifndef __UDQ_FBIT__
 #define __UDQ_FBIT__ 64
 #endif
-#ifndef DEBUG
-#define DEBUG 1
-#endif
 #ifndef __INT8_TYPE__
 #define __INT8_TYPE__ signed char
 #endif
@@ -705,9 +705,6 @@
 #endif
 #ifndef __SIZEOF_PTRDIFF_T__
 #define __SIZEOF_PTRDIFF_T__ 4
-#endif
-#ifndef stm32_flash_layout
-#define stm32_flash_layout 1
 #endif
 #ifndef __LACCUM_EPSILON__
 #define __LACCUM_EPSILON__ 0x1P-31LK
@@ -1042,6 +1039,9 @@
 #ifndef __SIZEOF_DOUBLE__
 #define __SIZEOF_DOUBLE__ 8
 #endif
+#ifndef Debug
+#define Debug 1
+#endif
 #ifndef __UFRACT_EPSILON__
 #define __UFRACT_EPSILON__ 0x1P-16UR
 #endif
@@ -1168,6 +1168,7 @@
 #endif
 
 // --- Include directories begin --- //
+//Inc
 //C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.4.0/Middlewares/ST/STemWin/inc
 //.
 //$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32/STM32F1xxxx/STM32F1xx_HAL_Driver/Inc
@@ -1181,7 +1182,6 @@
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/6.2.0/include-fixed
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/6.2.0/../../../../arm-eabi/sys-include
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/6.2.0/../../../../arm-eabi/include
-//Inc
 // --- Include directories end --- //
 
 

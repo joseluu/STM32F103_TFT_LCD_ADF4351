@@ -5,6 +5,7 @@
 #include <WM.h>
 
 struct {
+	int refClk;
 	int current;
 	int start;
 	int stop;

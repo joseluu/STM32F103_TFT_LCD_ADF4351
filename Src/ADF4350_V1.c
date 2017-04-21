@@ -203,7 +203,7 @@ void RF_OUT(void)
 	_SYNC(0);
 }
 
-void reset_all_reg(int initialFrequency)
+void reset_all_reg(int referenceFrequency)
 {
 	Register_Buf[5]=0x00580005;  // set digital lock detect 
 
@@ -216,7 +216,7 @@ void reset_all_reg(int initialFrequency)
 
 #define CLOCK_DIVIDER 1000 // KHz resolution
 	Register_Buf[3]=0x00000003 | CLOCK_DIVIDER << 3;
-#define R_COUNTER REF_CLK  // 1 MHz PFD
+#define R_COUNTER referenceFrequency  // 1 MHz PFD
 #define DOUBLE_BUFFER 1
 //(DB6=1)set PD polarity is positive;
 //(DB7=1)LDP is 6nS;
@@ -236,22 +236,25 @@ void reset_all_reg(int initialFrequency)
 	for (int i=0;i<6;i++){
 		Register_Previous[i] = 0;
 	}
-	sweepParameters.current = initialFrequency ;
+}
+
+void restoreSweepParameters()
+{
+	sweepParameters.current = 144500;
 	sweepParameters.start = 144500;
 	sweepParameters.stop = 145500;
 	sweepParameters.step = 100;
 	sweepParameters.timeStep = 100;
-	
 }
 
 //*********************************************************************
-void ADF4351_Init(int initialFrequency)
+void ADF4351_Init(int referenceFrequency)
 {
 	initPorts();
 	SET_CE();
-	reset_all_reg(initialFrequency);
+	reset_all_reg(referenceFrequency);
 
-	SetCurrentFrequency(initialFrequency);
+	SetCurrentFrequency(referenceFrequency * 10);
 	RF_OUT();
 }
 

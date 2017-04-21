@@ -52,7 +52,7 @@ Requirements: WindowManager - ( )
 #include "board_config.h"
 #include "LCDConf_F103_24.h"
 #include "Board_Touch.h"
-#include "FrameWinDLGSweeper.h"
+#include "FrameWinDLGMain.h"
 
 
 /*********************************************************************
@@ -97,7 +97,9 @@ void MainTask(void) {
 	GUI_Clear();
 //	GUI_DispString("Starting ...");
 	WM_HWIN hWin;
-	hWin = CreateFramewin();			// écran avec barre du haut " ADF 4351 PLL "
+
+	restoreSweepParameters();
+	hWin = CreateMainDialog();			// écran principal " ADF 4351 PLL "
 
 	//EDIT_SetCursorAtPixel(0,0);
 	

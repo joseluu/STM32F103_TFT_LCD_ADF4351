@@ -1,9 +1,10 @@
 #pragma once
-#ifndef _FRAMEWINDLG_2_H
-#define _FRAMEWINDLG_2_H
+#ifndef _FRAMEWINDLGSWEEPER_H
+#define _FRAMEWINDLGSWEEPER_H
 
 #include "WM.h"
-WM_HWIN CreateFramewin(void);
+WM_HWIN CreateSweeperDialog(void);
+
 
 void DisplayCurrentFrequency(WM_HWIN hWin, int frequencyKHz);
 void DisplaySweepProgress(int percentValue);

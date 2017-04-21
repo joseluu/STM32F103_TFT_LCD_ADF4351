@@ -45,12 +45,12 @@
 #define CLR_LE()		HAL_GPIO_WritePin(LE_PORT, LE_PIN,GPIO_PIN_RESET)
 
 
-
-void ADF4351_Init(int initialFrequency);
+void restoreSweepParameters();
+void ADF4351_Init(int referenceFrequency);
 void RF_OUT(void);
 void SweepTimerTick(void);
 int SetCurrentFrequency(int newFrequencyKHz);
-void reset_all_reg(int initialFrequency);
+void reset_all_reg(int referenceFrequency);
 void StartSweep(unsigned long Start, 
 	unsigned long  Stop, 
 	unsigned long  SweepDeltaTime, 
