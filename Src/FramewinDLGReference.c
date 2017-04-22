@@ -22,6 +22,9 @@
 #include "FrameWinDLGMain.h"
 #include "ADF4350_V1.h"
 #include "ADF4350_Messages.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 // USER END
 
@@ -38,6 +41,8 @@
 #define ID_TEXT_0 (GUI_ID_USER + 0x02)
 #define ID_TEXT_1 (GUI_ID_USER + 0x03)
 #define ID_BUTTON_0 (GUI_ID_USER + 0x04)
+#define ID_BUTTON_1 (GUI_ID_USER + 0x05)
+#define ID_BUTTON_2 (GUI_ID_USER + 0x06)
 
 
 // USER START (Optionally insert additional defines)
@@ -54,6 +59,10 @@
 */
 
 // USER START (Optionally insert additional static data)
+
+static int referenceFrequency = REF_CLK;
+static WM_HWIN hWinReferenceFrequency;
+
 // USER END
 
 /*********************************************************************
@@ -61,11 +70,13 @@
 *       _aDialogCreate
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-  { FRAMEWIN_CreateIndirect, "Framewin", ID_FRAMEWIN_0, 0, 0, 320, 220, 0, 0x0, 0 },
-  { EDIT_CreateIndirect, "Edit", ID_EDIT_0, 120, 70, 30, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "Reference", ID_TEXT_0, 30, 70, 80, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "MHz", ID_TEXT_1, 177, 71, 80, 20, 0, 0x0, 0 },
+  { FRAMEWIN_CreateIndirect, "Framewin", ID_FRAMEWIN_0, 1, 0, 320, 220, 0, 0x0, 0 },
+  { EDIT_CreateIndirect, "Edit", ID_EDIT_0, 125, 70, 25, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Reference", ID_TEXT_0, 52, 71, 61, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "MHz", ID_TEXT_1, 164, 71, 29, 20, 0, 0x0, 0 },
   { BUTTON_CreateIndirect, "Next", ID_BUTTON_0, 220, 166, 80, 33, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "+", ID_BUTTON_1, 125, 35, 25, 25, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "-", ID_BUTTON_2, 125, 100, 25, 25, 0, 0x0, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -78,6 +89,26 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 */
 
 // USER START (Optionally insert additional static code)
+char buffer[8];
+static void setEditValue(int newValue, WM_HWIN hItem)
+{
+	char * szVal = (char*) itoa(newValue, buffer, 10);
+	EDIT_SetText(hItem, szVal);
+}
+void onIncreaseReference()
+{
+	referenceFrequency++;
+	setEditValue(referenceFrequency, hWinReferenceFrequency);
+}
+void onDecreaseReference()
+{
+	referenceFrequency--;
+	if (referenceFrequency==0){
+		referenceFrequency = 1;
+	}
+	setEditValue(referenceFrequency, hWinReferenceFrequency);
+}
+
 // USER END
 
 /*********************************************************************
@@ -102,8 +133,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'Edit'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
-    EDIT_SetText(hItem, "10");
-    EDIT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_VCENTER);
+    EDIT_SetText(hItem, "1");
+    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     //
     // Initialization of 'Reference'
     //
@@ -114,7 +145,19 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
     TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_VCENTER);
+    //
+    // Initialization of '+'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_1);
+    BUTTON_SetFont(hItem, GUI_FONT_20B_ASCII);
+    //
+    // Initialization of '-'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_BUTTON_2);
+    BUTTON_SetFont(hItem, GUI_FONT_20B_ASCII);
     // USER START (Optionally insert additional code for further widget initialization)
+	  hWinReferenceFrequency =  WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
+	  setEditValue(referenceFrequency, hWinReferenceFrequency);
     // USER END
     break;
   case WM_NOTIFY_PARENT:
@@ -143,9 +186,39 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
-	      ADF4351_Init(REF_CLK);
+	      ADF4351_Init(referenceFrequency);
 	      SetCurrentFrequency(sweepParameters.current);
 	      MULTIPAGE_SelectPage(hMainDialog, 1);
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_1: // Notifications sent by '+'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+	      onIncreaseReference();
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_2: // Notifications sent by '-'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+	      onDecreaseReference();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:

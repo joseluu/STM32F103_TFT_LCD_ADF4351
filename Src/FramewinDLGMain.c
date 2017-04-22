@@ -101,19 +101,16 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     hMainDialog = WM_GetDialogItem(pMsg->hWin, ID_MULTIPAGE_0);
 	  MULTIPAGE_AddEmptyPage(hMainDialog, 0, "Reference");
 	  MULTIPAGE_AddEmptyPage(hMainDialog, 0, "Sweeper");
-	  MULTIPAGE_AddEmptyPage(hMainDialog, 0, "Parametres");
+	  MULTIPAGE_AddEmptyPage(hMainDialog, 0, "Configs");
     // USER START (Optionally insert additional code for further widget initialization)
-#ifdef PARAMETER_PAGE_READY
-	  MULTIPAGE_AttachWindow(hMainDialog, 2, hDialogParametres);
+#ifdef CONFIGS_PAGE_READY
+	  MULTIPAGE_AttachWindow(hMainDialog, 2, hDialogConfigs);
 #else
 	  MULTIPAGE_DisablePage(hMainDialog, 2);
 #endif
 	  MULTIPAGE_AttachWindow(hMainDialog, 1, CreateSweeperDialog()); 
-	  
 	  MULTIPAGE_AttachWindow(hMainDialog, 0, CreateReferenceDialog());
-
 	  MULTIPAGE_SelectPage(hMainDialog, 0);
-
 
     // USER END
     break;

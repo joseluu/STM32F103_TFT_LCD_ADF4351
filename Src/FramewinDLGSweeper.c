@@ -54,43 +54,43 @@ WM_HWIN hDialogSweeper;
 *
 **********************************************************************
 */
-#define ID_FRAMEWIN_0    (GUI_ID_USER + 0x00)
-#define ID_BUTTON_0    (GUI_ID_USER + 0x01)
-#define ID_BUTTON_1    (GUI_ID_USER + 0x02)
-#define ID_BUTTON_2    (GUI_ID_USER + 0x03)
-#define ID_BUTTON_3    (GUI_ID_USER + 0x04)
-#define ID_BUTTON_4    (GUI_ID_USER + 0x05)
-#define ID_BUTTON_5    (GUI_ID_USER + 0x06)
-#define ID_BUTTON_6    (GUI_ID_USER + 0x07)
-#define ID_BUTTON_7    (GUI_ID_USER + 0x08)
-#define ID_BUTTON_8    (GUI_ID_USER + 0x09)
-#define ID_BUTTON_9    (GUI_ID_USER + 0x0A)
-#define ID_BUTTON_10    (GUI_ID_USER + 0x0B)
-#define ID_BUTTON_11    (GUI_ID_USER + 0x0C)
-#define ID_BUTTON_12    (GUI_ID_USER + 0x0D)
-#define ID_BUTTON_13    (GUI_ID_USER + 0x0E)
-#define ID_EDIT_0    (GUI_ID_USER + 0x0F)
-#define ID_EDIT_1    (GUI_ID_USER + 0x10)
-#define ID_EDIT_2    (GUI_ID_USER + 0x11)
-#define ID_EDIT_3    (GUI_ID_USER + 0x12)
-#define ID_EDIT_4    (GUI_ID_USER + 0x13)
-#define ID_EDIT_5    (GUI_ID_USER + 0x14)
-#define ID_EDIT_6    (GUI_ID_USER + 0x15)
-#define ID_EDIT_7    (GUI_ID_USER + 0x16)
-#define ID_EDIT_8    (GUI_ID_USER + 0x17)
-#define ID_BUTTON_14    (GUI_ID_USER + 0x18)
-#define ID_BUTTON_15    (GUI_ID_USER + 0x19)
-#define ID_BUTTON_16    (GUI_ID_USER + 0x1A)
-#define ID_BUTTON_17    (GUI_ID_USER + 0x1B)
-#define ID_EDIT_9    (GUI_ID_USER + 0x1C)
-#define ID_EDIT_10    (GUI_ID_USER + 0x1D)
-#define ID_EDIT_11    (GUI_ID_USER + 0x1E)
-#define ID_EDIT_12    (GUI_ID_USER + 0x1F)
-#define ID_TEXT_0    (GUI_ID_USER + 0x20)
-#define ID_TEXT_1    (GUI_ID_USER + 0x21)
-#define ID_TEXT_2    (GUI_ID_USER + 0x22)
-#define ID_TEXT_3    (GUI_ID_USER + 0x23)
-#define ID_PROGBAR_0    (GUI_ID_USER + 0x24)
+#define ID_FRAMEWIN_0 (GUI_ID_USER + 0x00)
+#define ID_BUTTON_0 (GUI_ID_USER + 0x01)
+#define ID_BUTTON_1 (GUI_ID_USER + 0x02)
+#define ID_BUTTON_2 (GUI_ID_USER + 0x03)
+#define ID_BUTTON_3 (GUI_ID_USER + 0x04)
+#define ID_BUTTON_4 (GUI_ID_USER + 0x05)
+#define ID_BUTTON_5 (GUI_ID_USER + 0x06)
+#define ID_BUTTON_6 (GUI_ID_USER + 0x07)
+#define ID_BUTTON_7 (GUI_ID_USER + 0x08)
+#define ID_BUTTON_8 (GUI_ID_USER + 0x09)
+#define ID_BUTTON_9 (GUI_ID_USER + 0x0A)
+#define ID_BUTTON_10 (GUI_ID_USER + 0x0B)
+#define ID_BUTTON_11 (GUI_ID_USER + 0x0C)
+#define ID_BUTTON_12 (GUI_ID_USER + 0x0D)
+#define ID_BUTTON_13 (GUI_ID_USER + 0x0E)
+#define ID_EDIT_0 (GUI_ID_USER + 0x0F)
+#define ID_EDIT_1 (GUI_ID_USER + 0x10)
+#define ID_EDIT_2 (GUI_ID_USER + 0x11)
+#define ID_EDIT_3 (GUI_ID_USER + 0x12)
+#define ID_EDIT_4 (GUI_ID_USER + 0x13)
+#define ID_EDIT_5 (GUI_ID_USER + 0x14)
+#define ID_EDIT_6 (GUI_ID_USER + 0x15)
+#define ID_EDIT_7 (GUI_ID_USER + 0x16)
+#define ID_EDIT_8 (GUI_ID_USER + 0x17)
+#define ID_BUTTON_14 (GUI_ID_USER + 0x18)
+#define ID_BUTTON_15 (GUI_ID_USER + 0x19)
+#define ID_BUTTON_16 (GUI_ID_USER + 0x1A)
+#define ID_BUTTON_17 (GUI_ID_USER + 0x1B)
+#define ID_EDIT_9 (GUI_ID_USER + 0x1C)
+#define ID_EDIT_10 (GUI_ID_USER + 0x1D)
+#define ID_EDIT_11 (GUI_ID_USER + 0x1E)
+#define ID_EDIT_12 (GUI_ID_USER + 0x1F)
+#define ID_TEXT_0 (GUI_ID_USER + 0x20)
+#define ID_TEXT_1 (GUI_ID_USER + 0x21)
+#define ID_TEXT_2 (GUI_ID_USER + 0x22)
+#define ID_TEXT_3 (GUI_ID_USER + 0x23)
+#define ID_PROGBAR_0 (GUI_ID_USER + 0x24)
 
 
 // USER START (Optionally insert additional defines)
@@ -137,43 +137,43 @@ WM_HWIN hDialogSweeper;
 *       _aDialogCreate
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-  { FRAMEWIN_CreateIndirect, "Framewin", ID_FRAMEWIN_0, 1, 0, 320, 210, 0, 0x64, 0 },
-  { BUTTON_CreateIndirect, "-_7", ID_BUTTON_0, 20, 70, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "+_7", ID_BUTTON_1, 20, 20, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "+_6", ID_BUTTON_2, 71, 20, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "-_6", ID_BUTTON_3, 71, 70, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "+_5", ID_BUTTON_4, 106, 20, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "-_5", ID_BUTTON_5, 106, 70, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "+_4", ID_BUTTON_6, 142, 20, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "-_4", ID_BUTTON_7, 142, 70, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "+_3", ID_BUTTON_8, 196, 20, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "+_2", ID_BUTTON_9, 230, 20, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "-_3", ID_BUTTON_10, 196, 70, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "+_1", ID_BUTTON_11, 264, 20, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "-_2", ID_BUTTON_12, 230, 70, 20, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "-_1", ID_BUTTON_13, 264, 70, 20, 20, 0, 0x0, 0 },
-  { EDIT_CreateIndirect, "SW_SWEEP", ID_EDIT_0, 23, 105, 66, 20, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "SW_STOP", ID_EDIT_1, 223, 105, 67, 20, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Edit_7", ID_EDIT_2, 20, 45, 20, 20, 0, 0x1, 0 },
-  { EDIT_CreateIndirect, "Edit_6", ID_EDIT_3, 71, 45, 20, 20, 0, 0x1, 0 },
-  { EDIT_CreateIndirect, "Edit_5", ID_EDIT_4, 106, 45, 20, 20, 0, 0x1, 0 },
-  { EDIT_CreateIndirect, "Edit_4", ID_EDIT_5, 142, 45, 20, 20, 0, 0x1, 0 },
-  { EDIT_CreateIndirect, "Edit_3", ID_EDIT_6, 196, 45, 20, 20, 0, 0x1, 0 },
-  { EDIT_CreateIndirect, "Edit_2", ID_EDIT_7, 230, 45, 19, 20, 0, 0x1, 0 },
-  { EDIT_CreateIndirect, "Edit_1", ID_EDIT_8, 264, 45, 20, 20, 0, 0x1, 0 },
-  { BUTTON_CreateIndirect, "SW_Start_F", ID_BUTTON_14, 13, 170, 60, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "SW_Stop_F", ID_BUTTON_15, 13, 145, 60, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "SW_Pas", ID_BUTTON_16, 177, 145, 60, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "SW_Vitesse", ID_BUTTON_17, 177, 170, 60, 20, 0, 0x0, 0 },
-  { EDIT_CreateIndirect, "Edit_Stop_F", ID_EDIT_9, 80, 145, 56, 20, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Edit_Pas", ID_EDIT_10, 246, 145, 36, 20, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Edit_Start_F", ID_EDIT_11, 80, 170, 56, 20, 0, 0x64, 0 },
-  { EDIT_CreateIndirect, "Edit_Vitesse", ID_EDIT_12, 246, 170, 36, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "kHz", ID_TEXT_0, 279, 145, 35, 20, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "ms", ID_TEXT_1, 279, 170, 29, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "kHz", ID_TEXT_2, 143, 145, 26, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "kHz", ID_TEXT_3, 143, 170, 24, 20, 0, 0x0, 0 },
-  { PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_0, 120, 105, 80, 20, 0, 0x0, 0 },
+  { FRAMEWIN_CreateIndirect, "Framewin", ID_FRAMEWIN_0, 0, 0, 320, 215, 0, 0x64, 0 },
+  { BUTTON_CreateIndirect, "-_7", ID_BUTTON_0, 20, 75, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "+_7", ID_BUTTON_1, 20, 25, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "+_6", ID_BUTTON_2, 71, 25, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "-_6", ID_BUTTON_3, 71, 75, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "+_5", ID_BUTTON_4, 106, 25, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "-_5", ID_BUTTON_5, 106, 75, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "+_4", ID_BUTTON_6, 142, 25, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "-_4", ID_BUTTON_7, 142, 75, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "+_3", ID_BUTTON_8, 196, 25, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "+_2", ID_BUTTON_9, 230, 25, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "-_3", ID_BUTTON_10, 196, 75, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "+_1", ID_BUTTON_11, 264, 25, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "-_2", ID_BUTTON_12, 230, 75, 20, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "-_1", ID_BUTTON_13, 264, 75, 20, 20, 0, 0x0, 0 },
+  { EDIT_CreateIndirect, "SW_SWEEP", ID_EDIT_0, 23, 110, 66, 20, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "SW_STOP", ID_EDIT_1, 223, 110, 67, 20, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Edit_7", ID_EDIT_2, 20, 50, 20, 20, 0, 0x1, 0 },
+  { EDIT_CreateIndirect, "Edit_6", ID_EDIT_3, 71, 50, 20, 20, 0, 0x1, 0 },
+  { EDIT_CreateIndirect, "Edit_5", ID_EDIT_4, 106, 50, 20, 20, 0, 0x1, 0 },
+  { EDIT_CreateIndirect, "Edit_4", ID_EDIT_5, 142, 50, 20, 20, 0, 0x1, 0 },
+  { EDIT_CreateIndirect, "Edit_3", ID_EDIT_6, 196, 50, 20, 20, 0, 0x1, 0 },
+  { EDIT_CreateIndirect, "Edit_2", ID_EDIT_7, 230, 50, 19, 20, 0, 0x1, 0 },
+  { EDIT_CreateIndirect, "Edit_1", ID_EDIT_8, 264, 50, 20, 20, 0, 0x1, 0 },
+  { BUTTON_CreateIndirect, "SW_Start_F", ID_BUTTON_14, 13, 175, 60, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "SW_Stop_F", ID_BUTTON_15, 13, 150, 60, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "SW_Pas", ID_BUTTON_16, 177, 150, 60, 20, 0, 0x0, 0 },
+  { BUTTON_CreateIndirect, "SW_Vitesse", ID_BUTTON_17, 177, 175, 60, 20, 0, 0x0, 0 },
+  { EDIT_CreateIndirect, "Edit_Stop_F", ID_EDIT_9, 80, 150, 56, 20, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Edit_Pas", ID_EDIT_10, 246, 150, 36, 20, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Edit_Start_F", ID_EDIT_11, 80, 175, 56, 20, 0, 0x64, 0 },
+  { EDIT_CreateIndirect, "Edit_Vitesse", ID_EDIT_12, 246, 175, 36, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "kHz", ID_TEXT_0, 279, 150, 35, 20, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "ms", ID_TEXT_1, 279, 175, 29, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "kHz", ID_TEXT_2, 143, 150, 26, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "kHz", ID_TEXT_3, 143, 175, 24, 20, 0, 0x0, 0 },
+  { PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_0, 120, 110, 80, 20, 0, 0x0, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -243,19 +243,37 @@ void setMainFrequencyDisplay(int newFrequency, bool bSave)
 	displayFrequencyDigits();
 }
 
+void increaseFrequencyDigit(int i)
+{
+	frequencyDigits[i] += 1;
+	if (frequencyDigits[i] > 9) {
+		if (i<7){
+			increaseFrequencyDigit(i + 1);
+		}
+	}
+	frequencyDigits[i] %= 10;
+	setDigit(i, '0' + frequencyDigits[i]);
+}
+
+void decreaseFrequencyDigit(int i)
+{
+	frequencyDigits[i] -= 1;
+	if (frequencyDigits[i] < 0) {
+		frequencyDigits[i] += 10;
+		if (i < 7) {
+			decreaseFrequencyDigit(i + 1);
+		}
+	}
+	frequencyDigits[i] %= 10;
+	setDigit(i, '0' + frequencyDigits[i]);
+}
+
 void onDigitButtonAction(int NCode){
 	for (int i=0;i<7;i++) {
 		if (digitItems[i].idButtonMinus == NCode) {
-			frequencyDigits[i] -= 1;
-			if (frequencyDigits[i] < 0) {
-				frequencyDigits[i] += 10;
-			}
-			frequencyDigits[i] %= 10;
-			setDigit(i, '0' + frequencyDigits[i]);
+			decreaseFrequencyDigit(i);
 		} else if (digitItems[i].idButtonPlus == NCode){
-			frequencyDigits[i] += 1;
-			frequencyDigits[i] %= 10;
-			setDigit(i, '0' + frequencyDigits[i]);
+			increaseFrequencyDigit(i);
 		}
 	}
 	if (! bEditingField){
@@ -276,8 +294,8 @@ int getFrequencyFromDisplay(bool bRestore){
 	}
 	return nResult;
 }
-char buffer[8];
-void setEditValue(int newValue,WM_HWIN hItem){
+static char buffer[8];
+static void setEditValue(int newValue,WM_HWIN hItem){
 	char * szVal = (char*) itoa(newValue,buffer,10);
 	EDIT_SetText(hItem, szVal);
 }
@@ -567,7 +585,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_12);
     EDIT_SetText(hItem, "0000");
-    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetTextAlign(hItem, GUI_TA_RIGHT | GUI_TA_VCENTER);
     //
     // Initialization of 'kHz'
     //
