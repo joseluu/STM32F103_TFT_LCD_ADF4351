@@ -44,6 +44,7 @@ void DoStopSweep()
 		SweepTimerStop();	
 		bStarted = 0;
 		DoRfOut(); // restore current frequency
+		DisplaySweepProgress(0);
 	}
 }
 

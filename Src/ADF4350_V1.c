@@ -190,7 +190,7 @@ void RF_OUT(void)
 	unsigned long oscillatorFrequency = RF_Fre_Value * div;
 	Register_Buf[0] = (oscillatorFrequency / 1000) << 15 | (oscillatorFrequency % 1000) << 3;
 		
-	_SYNC(1);
+//	_SYNC(1); // measure time to write to ADF
 	for (int i=5;i>=0;i--){
 		bool mustWrite = false;
 		if (mustWrite || (Register_Buf[i] != Register_Previous[i])) {
@@ -200,7 +200,7 @@ void RF_OUT(void)
 			Register_Previous[i] = Register_Buf[i];// remember value so that we can skip it next time
 		}
 	}
-	_SYNC(0);
+//	_SYNC(0);
 }
 
 void reset_all_reg(int referenceFrequency)
@@ -240,11 +240,11 @@ void reset_all_reg(int referenceFrequency)
 
 void restoreSweepParameters()
 {
-	sweepParameters.current = 144500;
-	sweepParameters.start = 144500;
-	sweepParameters.stop = 145500;
-	sweepParameters.step = 100;
-	sweepParameters.timeStep = 100;
+	sweepParameters.current = 144300;
+	sweepParameters.start = 144300;
+	sweepParameters.stop = 145305;
+	sweepParameters.step = 1;
+	sweepParameters.timeStep = 1000;
 }
 
 //*********************************************************************
@@ -275,6 +275,7 @@ void StartSweep(unsigned long Start,
 		Delta_Fre_value = SweepDeltaFrequency;
 		Sweep_Time_Counter = 0;
 		percentSweepIncrement = 100.0/((Stop_Fre_value-Start_Fre_value)/Delta_Fre_value);
+		percentSweep = 0;
 
 		SweepCurrentFreq = Start_Fre_value;
 		Sweep_DIR_Flag = 0;
@@ -287,7 +288,7 @@ void StartSweep(unsigned long Start,
 
 
 void SweepTimerTick(void){ // interrupt processing routine
-	unsigned long temp = sweepParameters.timeStep /50; // timer is every 100 us
+	unsigned long temp = sweepParameters.timeStep; // adjustment needed here ?
 	if (Sweep_Time_Counter++ >= temp) {
 		Sweep_Time_Counter = 0;
 		if (Sweep_DIR_Flag == 0) {
@@ -297,27 +298,31 @@ void SweepTimerTick(void){ // interrupt processing routine
 			percentSweep += percentSweepIncrement;
 			if (percentSweep >= 100){
 				percentSweep = 100;
+				SweepProgress((int)percentSweep);
 			}   
 			
 			if (SweepCurrentFreq >= Stop_Fre_value) {
 				SweepCurrentFreq = Stop_Fre_value;
+				percentSweep = 100;
 				Sweep_DIR_Flag = 1;
 			}
+			SweepProgress(percentSweep);
 		} else {
 			SweepCurrentFreq -= Delta_Fre_value;
 
-			SweepProgress(percentSweep);
 			percentSweep -= percentSweepIncrement;
 			if (percentSweep <= 0) {
 				percentSweep = 0;
 			}		
-			
+			SweepProgress(percentSweep);
 			if (SweepCurrentFreq <= Start_Fre_value) {
 				SweepCurrentFreq = Start_Fre_value;
 				Sweep_DIR_Flag = 0;
 			}
 		}
 		RF_Fre_Value = 	SweepCurrentFreq;
+		_SYNC(1);  // measure effective timerStep
+		_SYNC(0);
 		RF_OUT();
 	}
 }

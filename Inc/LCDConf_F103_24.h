@@ -42,6 +42,8 @@ void LcdWriteData8(unsigned char Data);
 void LcdWriteReg16(unsigned short Cmd);
 void LcdWriteData16(unsigned short Data);
 int LCD_SafeToInterrupt(void);
+void delay_us_DWT(int uS);
+void delay_ms_DWT(int ms);
 
 //define PIN configuration below
 #ifdef SWEEPER
